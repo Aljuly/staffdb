@@ -1,36 +1,100 @@
 package org.staffdb;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class MainApp extends Application {
 
-    private static final Logger log = LoggerFactory.getLogger(MainApp.class);
+    private Stage primaryStage;
+    private BorderPane rootLayout;
 
-    public static void main(String[] args) throws Exception {
-        launch(args);
+    private ObservableList<StaffEntity> staffData = FXCollections.observableArrayList();
+
+    /**
+     * Temporary constructor
+     */
+    public MainApp() {
+        staffData.add(new StaffEntity("Peter", "Abrams"));
+        staffData.add(new StaffEntity("Jason", "Stethem"));
+        staffData.add(new StaffEntity("Ababa", "Galamaga"));
     }
 
-    public void start(Stage stage) throws Exception {
+    /**
+     *
+     * @return Staff data as ObservableList
+     */
+    public ObservableList<StaffEntity> getStaffData() {
+        return staffData;
+    }
 
-        log.info("Starting Hello JavaFX and Maven demonstration application");
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("staffdb");
 
-        String fxmlFile = "/fxml/hello.fxml";
-        log.debug("Loading FXML for main view from: {}", fxmlFile);
-        FXMLLoader loader = new FXMLLoader();
-        Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
+        initRootLayout();
 
-        log.debug("Showing JFX scene");
-        Scene scene = new Scene(rootNode, 400, 200);
-        scene.getStylesheets().add("/styles/styles.css");
+        showStaffOverview();
+    }
 
-        stage.setTitle("Hello JavaFX and Maven");
-        stage.setScene(scene);
-        stage.show();
+    /**
+     * Инициализирует корневой макет.
+     */
+    public void initRootLayout() {
+        try {
+            // Загружаем корневой макет из fxml файла.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/fxml/RootLayout.fxml"));
+            rootLayout = (BorderPane) loader.load();
+
+            // Отображаем сцену, содержащую корневой макет.
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Показывает в корневом макете сведения об адресатах.
+     */
+    public void showStaffOverview() {
+        try {
+            // Загружаем сведения об адресатах.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/fxml/StaffOverview.fxml"));
+            AnchorPane personOverview = (AnchorPane) loader.load();
+
+            // Помещаем сведения об адресатах в центр корневого макета.
+            rootLayout.setCenter(personOverview);
+
+            // Даём контроллеру доступ к главному приложению.
+            StaffOverviewController controller = loader.getController();
+            controller.setMainApp(this);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Возвращает главную сцену.
+     * @return
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

@@ -1,15 +1,10 @@
 package org.staffdb;
 
+import javafx.beans.property.*;
+
 import java.time.LocalDate;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-public class Staff {
+public class StaffEntity {
 
     private final IntegerProperty id;
     private final StringProperty firstName;
@@ -22,7 +17,7 @@ public class Staff {
     /**
      * Default constructor
      */
-    public Staff() {
+    public StaffEntity() {
         this(null, null);
     }
 
@@ -31,14 +26,15 @@ public class Staff {
      * @param firstName
      * @param lastName
      */
-    public Staff(StringProperty firstName, StringProperty lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public StaffEntity(String firstName, String lastName) {
+        this.firstName = new SimpleStringProperty(firstName);
+        this.lastName = new SimpleStringProperty(lastName);
+
         this.id = new SimpleIntegerProperty(0);
         this.addres = new SimpleStringProperty("");
         this.city = new SimpleStringProperty("");
         this.telephone = new SimpleStringProperty("");
-        this.birthday = new SimpleObjectProperty<LocalDate>(LocalDate.of(1980, 1, 1));
+        this.birthday = new SimpleObjectProperty<>(LocalDate.of(1980, 1, 1));
     }
 
     public int getId() {
