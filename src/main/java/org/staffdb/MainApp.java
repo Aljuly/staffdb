@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -92,6 +93,45 @@ public class MainApp extends Application {
      */
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    /**
+     * Открывает диалоговое окно для изменения деталей указанного адресата.
+     * Если пользователь кликнул OK, то изменения сохраняются в предоставленном
+     * объекте адресата и возвращается значение true.
+     *
+     * @param staffEntity - объект адресата, который надо изменить
+     * @return true, если пользователь кликнул OK, в противном случае false.
+     */
+    public boolean showPersonEditDialog(StaffEntity staffEntity) {
+        try {
+            // Загружаем fxml-файл и создаём новую сцену
+            // для всплывающего диалогового окна.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("/fxml/StaffEditDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Создаём диалоговое окно Stage.
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Staff");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Передаём адресата в контроллер.
+            StaffEditDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setPerson(staffEntity);
+
+            // Отображаем диалоговое окно и ждём, пока пользователь его не закроет
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String[] args) {
