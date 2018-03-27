@@ -1,7 +1,9 @@
 package org.staffdb;
 
 import javafx.beans.property.*;
+import util.LocalDateAdapter;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 public class StaffEntity {
@@ -109,6 +111,7 @@ public class StaffEntity {
         this.telephone.set(telephone);
     }
 
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     public LocalDate getBirthday() {
         return birthday.get();
     }
